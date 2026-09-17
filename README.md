@@ -12,10 +12,25 @@ deployed as-is to GitHub Pages.
 |---|---|---|
 | Home | live | summarizes the tabs below |
 | Crypto | live | [CoinGecko](https://www.coingecko.com/en/api) public API (CORS-open, no proxy needed) |
-| K-Beauty | live | Jun's own Google Sheet — see below |
+| K-Beauty | live | embeds [Jun's Amazon ranking tracker](https://choidot1201.github.io/Amazon-Ranking-dashboard/) — see below |
 | Equity | coming next | blocked on a stock-quote proxy decision (see below) |
 | Biopharma | coming next | same blocker as Equity |
 | Portfolio | coming next | needs live pricing for whatever's held; same blocker for equity holdings |
+
+### K-Beauty tab
+
+An `<iframe>` embedding `https://choidot1201.github.io/Amazon-Ranking-dashboard/`
+(repo `choidot1201/Amazon-Ranking-dashboard`) directly — Jun's own separately-maintained
+Amazon Beauty Top-100 rank tracker (region tabs, K-beauty-only toggle, movers, brand
+matrix + entry-trend chart). This tab has no code of its own beyond the `<iframe>`; any
+change to that dashboard shows up here automatically on next load.
+
+An earlier version of this tab (2026-09-17, same day) built its own 5-sub-tab tracker
+(Charting SKUs / Rank movement / Silicon2 brand ranking / Universe / Unmapped, ported
+from `../mooboard-clone`). Replaced per user request to show the exact
+Amazon-Ranking-dashboard format instead — that code (`kbeauty.js`, `sheet-data.js`,
+`config.js`, `silicon2-data.js`) has been removed from this repo; it still exists in
+`../mooboard-clone` if needed again.
 
 ### Why Equity/Biopharma/Portfolio aren't live yet
 
@@ -28,30 +43,6 @@ with a Python proxy (`server.py`), but running that continuously would defeat th
 The likely fix is a small serverless proxy (e.g. a Cloudflare Worker) sitting between this
 static site and Yahoo Finance — free tier, no maintenance, keeps everything else static.
 Not yet built; **do not silently add this or any other new external service** — ask first.
-
-### K-Beauty tab
-
-Ported from [`../mooboard-clone`](../mooboard-clone)'s `kbeauty.js` (same 5 sub-tabs:
-Charting SKUs / Rank movement / Silicon2 brand ranking / Universe / Unmapped), with its
-Python CSV-reshaping (`server.py`) replaced by client-side `sheet-data.js` so it runs
-without a backend.
-
-- **Data source:** a Google Sheet (`beauty_personal_care_top100_live`) kept fresh by an
-  **Apps Script time trigger inside the sheet itself** — not by this repo, not by any CI
-  here. That's the "recurring without me" part for this tab: the sheet updates on its own
-  schedule inside Google's infrastructure, and this site just reads whatever's currently
-  in it on every page load, via the sheet's own CSV export
-  (`docs.google.com/.../export?format=csv&gid=...`, which serves
-  `Access-Control-Allow-Origin: *`).
-- Why not scrape Amazon ourselves from GitHub Actions? We tried (see
-  [`../crawl_amazon_beauty_bestsellers`](../crawl_amazon_beauty_bestsellers)) — Amazon
-  now blocks GitHub-hosted runner IPs even on bestseller list pages, not just product
-  pages. See `STATUS.md`.
-- **Silicon2 brand ranking** sub-tab sources from Silicon2 (실리콘투, `257720.KQ`) IR
-  materials — a 44-company brand→listed-company read-through in `silicon2-data.js`,
-  copied verbatim from `mooboard-clone`.
-- Update the brand-matching list in `KBEAUTY_BRAND_UNIVERSE` (`config.js`) — add a name
-  and any aliases that show up in Amazon product titles.
 
 ### Crypto tab
 

@@ -9,11 +9,14 @@
 - **Crypto** and **K-Beauty** are live and verified (local + deployed, both themes, no
   console errors). **Equity, Biopharma, Portfolio** are "coming next" placeholders —
   blocked on a stock-quote data-source decision, see below.
-- K-Beauty tab reads the `beauty_personal_care_top100_live` Google Sheet
-  (`1XQoI7SSuFKbuRAeD23uQIfJu3FBXEv__6rvm68Zfo80`) client-side. Kept fresh by an **Apps
-  Script trigger inside the sheet itself** (confirmed by Jun, not inspected directly —
-  no edit access from this session). Last observed sheet update: 2026-09-15 05:24 KST.
-  This site does not control, monitor, or alert on that trigger.
+- **K-Beauty tab, revised 2026-09-17 (same day, second pass):** now a plain `<iframe>`
+  embedding `https://choidot1201.github.io/Amazon-Ranking-dashboard/` — per explicit user
+  request to show that exact site's format rather than the 5-sub-tab tracker built
+  earlier that day. That earlier build (`kbeauty.js` + `sheet-data.js` + `config.js` +
+  `silicon2-data.js`, reading the `beauty_personal_care_top100_live` Google Sheet
+  client-side) has been deleted from this repo — still exists in `../mooboard-clone` if
+  ever needed again. This tab now has zero data logic of its own; freshness is entirely
+  `Amazon-Ranking-dashboard`'s concern, not this repo's.
 - Crypto tab reads CoinGecko's public `coins/markets` endpoint client-side, no key, no
   proxy (CoinGecko sends `Access-Control-Allow-Origin: *`).
 
@@ -32,28 +35,28 @@
      Korean tickers specifically — most free options are US-only or require a paid key).
   3. Run `server.py` on an always-on host (not "recurring without me" in the serverless
      sense, but simpler if the user's fine with a small VPS or an always-on Mac).
-- Nobody is monitoring the K-beauty sheet's Apps Script trigger for silent failure. If it
-  stops updating, this site keeps rendering stale data with no warning banner.
+- The embedded `Amazon-Ranking-dashboard` still ultimately depends on the same
+  Apps-Script-fed Google Sheet as before — nobody is monitoring that trigger for silent
+  failure, but that's now entirely that other repo's concern, not this one's.
 
 ## Related projects in this data neighborhood
 
-- `../amazon_beauty_dashboard` — separate, older dashboard reading the *same* live
-  K-beauty sheet as this project, different UI. Not merged; both still live.
-- `../mooboard-clone` — original server-proxied version of this K-beauty tab, plus its
-  own broader multi-asset dashboard (Equity/Biopharma/Coverage/Portfolio via
-  `server.py`'s Yahoo proxy). This project intentionally does not include its `Coverage`
-  tab (dropped per user's explicit tab list) and re-implements Equity/Biopharma from
-  scratch once the quote-source decision above is made, rather than reusing `server.py`.
+- `../amazon_beauty_dashboard` (deployed as `choidot1201.github.io/Amazon-Ranking-dashboard`)
+  — the site now embedded directly in this project's K-Beauty tab via `<iframe>`. Any
+  future change to that dashboard shows up here automatically; no code to keep in sync.
+- `../mooboard-clone` — has its own broader multi-asset dashboard
+  (Equity/Biopharma/Coverage/Portfolio via `server.py`'s Yahoo proxy) and its own,
+  different K-beauty sub-tab tracker (not used here anymore). This project intentionally
+  does not include a `Coverage` tab (dropped per user's explicit tab list) and will
+  re-implement Equity/Biopharma from scratch once the quote-source decision below is
+  made, rather than reusing `server.py`.
 - `../crawl_amazon_beauty_bestsellers` — retired, confirmed dead 2026-08-25. GitHub
   Actions runs failed with `crawled: 0, blocked` on all 5 regions (Amazon blocks
-  GH-hosted runner IPs on list pages, not just `/dp/` detail pages). Irrelevant to this
-  project — K-beauty data comes from the separate, still-live Apps-Script-fed sheet.
+  GH-hosted runner IPs on list pages, not just `/dp/` detail pages). Irrelevant here.
 
 ## Next actions
 
 1. Decide the Equity/Biopharma/Portfolio quote-source question above with the user, then
    build those three tabs.
-2. Optional: add a "data may be stale" banner on the K-Beauty tab if `bankedAt` is more
-   than N hours old, since nothing here currently detects a dead Apps Script trigger.
-3. Optional: crypto holdings could power a first cut of Portfolio today (CoinGecko has no
+2. Optional: crypto holdings could power a first cut of Portfolio today (CoinGecko has no
    CORS problem) even before equity quotes are solved.

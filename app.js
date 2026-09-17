@@ -41,8 +41,8 @@
   // ---------- coming-soon placeholder (Equity / Biopharma / Portfolio) ----------
   function comingSoon(title, body) {
     return `<div class="coming-soon">
-      <h2 class="kb-chart-title">${title}</h2>
-      <p class="kb-caption">${body}</p>
+      <h2 class="coming-soon-title">${title}</h2>
+      <p class="coming-soon-body">${body}</p>
     </div>`;
   }
   $('#view-equity').innerHTML = comingSoon(
@@ -59,7 +59,10 @@
   );
 
   // ---------- K-beauty (already live) ----------
-  views.kbeauty = createKbeautyTracker($('#view-kbeauty'));
+  // No JS to activate: it's an embedded iframe of Jun's own Amazon ranking
+  // tracker (see index.html) — a separately deployed, separately maintained
+  // site, so this tab is just a window onto it.
+  views.kbeauty = { activate() {} };
 
   // ---------- Crypto (already live) ----------
   views.crypto = createCryptoView($('#view-crypto'));
@@ -79,7 +82,7 @@
         <button class="home-card" data-goto="kbeauty">
           <div class="home-card-name">K-Beauty</div>
           <div class="home-card-price">Amazon Top 100 · 5 regions</div>
-          <div class="home-card-chg faint" id="home-kbeauty-meta">Loading…</div>
+          <div class="home-card-chg faint">Jun's Amazon ranking tracker</div>
         </button>
       </div>
     </div>
@@ -94,14 +97,7 @@
   `;
   homeEl.querySelectorAll('[data-goto]').forEach((btn) => btn.addEventListener('click', () => showView(btn.dataset.goto)));
 
-  views.home = {
-    activate() {
-      getKbeautyDataset().then((data) => {
-        const el = $('#home-kbeauty-meta');
-        if (el) el.textContent = data.bankedAt ? `banked ${data.bankedAt}` : 'live';
-      }).catch(() => {});
-    },
-  };
+  views.home = { activate() {} };
 
   showView('home');
 })();
