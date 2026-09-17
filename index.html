@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Jun Market Watcher — K-Beauty</title>
-<meta name="description" content="Amazon Top-100 K-beauty SKU rank tracker across US/UK/FR/ES/DE, read live from a Google Sheet." />
+<title>Jun Market Watcher</title>
+<meta name="description" content="Personal market cockpit — crypto and K-beauty SKU rankings live, equity/biopharma/portfolio coming next." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -27,21 +27,41 @@
 <div class="app-shell">
 
   <header class="app-header">
-    <div class="brand">
+    <button class="logo" title="Home" aria-label="Jun Market Watcher home" id="logo-home-btn">
+      <svg width="24" height="24" viewBox="0 0 40 40" aria-hidden="true">
+        <g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+          <path d="M6 28 L15 18 L21 23 L34 9" />
+          <path d="M25 9 H34 V18" />
+        </g>
+      </svg>
       <span class="wordmark">Jun Market Watcher</span>
-      <span class="brand-sub">K-Beauty · Amazon Top 100</span>
-    </div>
-    <div class="header-actions">
-      <a class="ghost-link" id="sheet-link" href="#" target="_blank" rel="noopener">Source sheet</a>
-      <button id="theme-toggle" class="icon-btn" title="Switch theme" aria-label="Toggle theme">☀</button>
-    </div>
+    </button>
+
+    <nav class="main-nav" id="main-nav">
+      <button class="nav-item nav-active" data-view="home" aria-current="page">Home</button>
+      <button class="nav-item" data-view="equity">Equity</button>
+      <button class="nav-item" data-view="crypto">Crypto</button>
+      <button class="nav-item" data-view="biopharma">Biopharma</button>
+      <button class="nav-item" data-view="kbeauty">K-Beauty</button>
+      <button class="nav-item" data-view="portfolio">Portfolio</button>
+    </nav>
+
+    <span class="clock num" id="clock">—</span>
+    <button id="theme-toggle" class="icon-btn" title="Switch theme" aria-label="Toggle theme">☀</button>
   </header>
 
-  <div class="kbeauty-view" id="kbeauty-root"></div>
+  <div class="views" id="views">
+    <div class="view" id="view-home"></div>
+    <div class="view" id="view-equity" hidden></div>
+    <div class="view" id="view-crypto" hidden></div>
+    <div class="view" id="view-biopharma" hidden></div>
+    <div class="view" id="view-kbeauty" hidden></div>
+    <div class="view" id="view-portfolio" hidden></div>
+  </div>
 
   <footer class="app-footer">
     <span>© 2026 Jun Market Watcher. Personal research cockpit.</span>
-    <span>Amazon Top-100 data via Jun's own Google Sheet · not investment advice.</span>
+    <span class="footer-note">Crypto via CoinGecko · K-beauty via Jun's own Google Sheet · not investment advice.</span>
   </footer>
 
 </div>
@@ -50,23 +70,7 @@
 <script src="silicon2-data.js"></script>
 <script src="sheet-data.js"></script>
 <script src="kbeauty.js"></script>
-<script>
-  document.getElementById('sheet-link').href = KBEAUTY_SHEET_EDIT_URL;
-
-  const themeBtn = document.getElementById('theme-toggle');
-  function syncThemeBtn() {
-    themeBtn.textContent = document.documentElement.dataset.theme === 'light' ? '☾' : '☀';
-  }
-  syncThemeBtn();
-  themeBtn.addEventListener('click', () => {
-    const next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
-    document.documentElement.dataset.theme = next;
-    try { localStorage.setItem('jmw.theme', next); } catch (e) {}
-    syncThemeBtn();
-  });
-
-  const tracker = createKbeautyTracker(document.getElementById('kbeauty-root'));
-  tracker.activate();
-</script>
+<script src="crypto.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
